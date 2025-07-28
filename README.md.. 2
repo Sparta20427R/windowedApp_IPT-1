@@ -1,0 +1,322 @@
+import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+public class ImageProcessingApp extends JFrame {
+    private BufferedImage originalImage;
+    private BufferedImage currentImage;
+    private JLabel imageLabel;
+
+    public ImageProcessingApp() {
+        setTitle("Image Processing Tool");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        createMenuBar();
+        setupUI();
+    }
+
+    private void createMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+
+        // File Menu
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem openItem = new JMenuItem("Open");
+        openItem.addActionListener(this::openImage);
+        fileMenu.add(openItem);
+
+        // Filters Menu
+        JMenu filterMenu = new JMenu("Filters");
+        JMenuItem grayscaleItem = new JMenuItem("Grayscale");
+        grayscaleItem.addActionListener(e -> applyGrayscale());
+        filterMenu.add(grayscaleItem);
+
+        // Reset Option
+        JMenuItem resetItem = new JMenuItem("Reset");
+        resetItem.addActionListener(e -> resetImage());
+        filterMenu.add(resetItem);
+
+        menuBar.add(fileMenu);
+        menuBar.add(filterMenu);
+        setJMenuBar(menuBar);
+    }
+
+    private void setupUI() {
+        imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        imageLabel.setVerticalAlignment(SwingConstants.CENTER);
+        
+        JScrollPane scrollPane = new JScrollPane(imageLabel);
+        scrollPane.setPreferredSize(new Dimension(780, 550));
+        add(scrollPane, BorderLayout.CENTER);
+    }
+
+    private void openImage(ActionEvent event) {
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showOpenDialog(this);
+        
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            try {
+                originalImage = ImageIO.read(file);
+                currentImage = originalImage;
+                displayImage();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error loading image", 
+                    "IO Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void displayImage() {
+        if (currentImage != null) {
+            ImageIcon icon = new ImageIcon(currentImage);
+            imageLabel.setIcon(icon);
+        }
+    }
+
+    private void applyGrayscale() {
+        if (currentImage == null) return;
+        
+        BufferedImage grayImage = new BufferedImage(
+            currentImage.getWidth(),
+            currentImage.getHeight(),
+            BufferedImage.TYPE_INT_RGB
+        );
+
+        for (int y = 0; y < currentImage.getHeight(); y++) {
+            for (int x = 0; x < currentImage.getWidth(); x++) {
+                Color color = new Color(currentImage.getRGB(x, y));
+                int avg = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
+                Color gray = new Color(avg, avg, avg);
+                grayImage.setRGB(x, y, gray.getRGB());
+            }
+        }
+
+        currentImage = grayImage;
+        displayImage();
+    }
+
+    private void resetImage() {
+        if (originalImage != null) {
+            currentImage = originalImage;
+            displayImage();
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            ImageProcessingApp app = new ImageProcessingApp();
+            app.setVisible(true);
+        });
+    }
+private void addSaveMenuItem(JMenu fileMenu) {
+    JMenuItem saveItem = new JMenuItem("Save");
+    saveItem.addActionListener(e -> saveImage());
+    fileMenu.add(saveItem);
+}
+
+private void saveImage() {
+    if (currentImage == null) return;
+    
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Save Image");
+    
+    if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+        File file = fileChooser.getSelectedFile();
+        try {
+            ImageIO.write(currentImage, "PNG", file);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error saving image", 
+                "IO Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}private void addSaveMenuItem(JMenu fileMenu) {
+    JMenuItem saveItem = new JMenuItem("Save");
+    saveItem.addActionListener(e -> saveImage());
+    fileMenu.add(saveItem);
+}
+
+private void saveImage() {
+    if (currentImage == null) return;
+    
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Save Image");
+    
+    if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+        File file = fileChooser.getSelectedFile();
+        try {
+            ImageIO.write(currentImage, "PNG", file);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error saving image", 
+                "IO Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}import javax.imageio.ImageIO;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+
+public class ImageProcessingApp extends JFrame {
+    private BufferedImage originalImage;
+    private BufferedImage currentImage;
+    private JLabel imageLabel;
+
+    public ImageProcessingApp() {
+        setTitle("Image Processing Tool");
+        setSize(800, 600);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
+
+        createMenuBar();
+        setupUI();
+    }
+
+    private void createMenuBar() {
+        JMenuBar menuBar = new JMenuBar();
+
+        // File Menu
+        JMenu fileMenu = new JMenu("File");
+        JMenuItem openItem = new JMenuItem("Open");
+        openItem.addActionListener(this::openImage);
+        fileMenu.add(openItem);
+
+        // Filters Menu
+        JMenu filterMenu = new JMenu("Filters");
+        JMenuItem grayscaleItem = new JMenuItem("Grayscale");
+        grayscaleItem.addActionListener(e -> applyGrayscale());
+        filterMenu.add(grayscaleItem);
+
+        // Reset Option
+        JMenuItem resetItem = new JMenuItem("Reset");
+        resetItem.addActionListener(e -> resetImage());
+        filterMenu.add(resetItem);
+
+        menuBar.add(fileMenu);
+        menuBar.add(filterMenu);
+        setJMenuBar(menuBar);
+    }
+
+    private void setupUI() {
+        imageLabel = new JLabel();
+        imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        imageLabel.setVerticalAlignment(SwingConstants.CENTER);
+        
+        JScrollPane scrollPane = new JScrollPane(imageLabel);
+        scrollPane.setPreferredSize(new Dimension(780, 550));
+        add(scrollPane, BorderLayout.CENTER);
+    }
+
+    private void openImage(ActionEvent event) {
+        JFileChooser fileChooser = new JFileChooser();
+        int result = fileChooser.showOpenDialog(this);
+        
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File file = fileChooser.getSelectedFile();
+            try {
+                originalImage = ImageIO.read(file);
+                currentImage = originalImage;
+                displayImage();
+            } catch (IOException ex) {
+                JOptionPane.showMessageDialog(this, "Error loading image", 
+                    "IO Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
+
+    private void displayImage() {
+        if (currentImage != null) {
+            ImageIcon icon = new ImageIcon(currentImage);
+            imageLabel.setIcon(icon);
+        }
+    }
+
+    private void applyGrayscale() {
+        if (currentImage == null) return;
+        
+        BufferedImage grayImage = new BufferedImage(
+            currentImage.getWidth(),
+            currentImage.getHeight(),
+            BufferedImage.TYPE_INT_RGB
+        );
+
+        for (int y = 0; y < currentImage.getHeight(); y++) {
+            for (int x = 0; x < currentImage.getWidth(); x++) {
+                Color color = new Color(currentImage.getRGB(x, y));
+                int avg = (color.getRed() + color.getGreen() + color.getBlue()) / 3;
+                Color gray = new Color(avg, avg, avg);
+                grayImage.setRGB(x, y, gray.getRGB());
+            }
+        }
+
+        currentImage = grayImage;
+        displayImage();
+    }
+
+    private void resetImage() {
+        if (originalImage != null) {
+            currentImage = originalImage;
+            displayImage();
+        }
+    }
+
+    public static void main(String[] args) {
+        SwingUtilities.invokeLater(() -> {
+            ImageProcessingApp app = new ImageProcessingApp();
+            app.setVisible(true);
+        });
+    }
+private void addSaveMenuItem(JMenu fileMenu) {
+    JMenuItem saveItem = new JMenuItem("Save");
+    saveItem.addActionListener(e -> saveImage());
+    fileMenu.add(saveItem);
+}
+
+private void saveImage() {
+    if (currentImage == null) return;
+    
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Save Image");
+    
+    if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+        File file = fileChooser.getSelectedFile();
+        try {
+            ImageIO.write(currentImage, "PNG", file);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error saving image", 
+                "IO Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}private void addSaveMenuItem(JMenu fileMenu) {
+    JMenuItem saveItem = new JMenuItem("Save");
+    saveItem.addActionListener(e -> saveImage());
+    fileMenu.add(saveItem);
+}
+
+private void saveImage() {
+    if (currentImage == null) return;
+    
+    JFileChooser fileChooser = new JFileChooser();
+    fileChooser.setDialogTitle("Save Image");
+    
+    if (fileChooser.showSaveDialog(this) == JFileChooser.APPROVE_OPTION) {
+        File file = fileChooser.getSelectedFile();
+        try {
+            ImageIO.write(currentImage, "PNG", file);
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(this, "Error saving image", 
+                "IO Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}
+javac ImageProcessingApp.java
+java ImageProcessingAppjavac ImageProcessingApp.java
+java ImageProcessingApp
